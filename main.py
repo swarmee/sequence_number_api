@@ -40,11 +40,8 @@ def on_startup():
 def increment(seqNumbersRequired : int = 1):
     with Session(engine) as session:
         results = session.exec(select(Sequence)).first()
-        print('#############')
         response = { "sequenceNumbers" : [], "sequnceLength" : seqNumbersRequired }
         response['sequenceNumbers'].extend([results.seq + x for x in range(0,seqNumbersRequired)])
-        print(response)
-        print('#############')        
         results.seq = results.seq + seqNumbersRequired
         session.add(results)
         session.commit()
