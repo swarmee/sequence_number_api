@@ -3,12 +3,10 @@ from typing import Optional
 from fastapi import FastAPI
 from sqlmodel import Field, Session, SQLModel, create_engine, select
 
-
 class Sequence(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     seq: int  = Field(default=None, primary_key=False)
     name: str = Field(index=True)
-
 
 sqlite_file_name = "database.db"
 sqlite_url = f"sqlite:///{sqlite_file_name}"
@@ -16,8 +14,7 @@ sqlite_url = f"sqlite:///{sqlite_file_name}"
 connect_args = {"check_same_thread": False}
 engine = create_engine(sqlite_url, echo=True, connect_args=connect_args)
 
-
-def create_db_and_tables():
+def create_db_and_table():
     SQLModel.metadata.create_all(engine)
     try :
         SequenceRecord = Sequence(id=1, seq= 1, name="Sequence Record")
@@ -27,14 +24,11 @@ def create_db_and_tables():
     except:
         pass
 
-
 app = FastAPI()
-
 
 @app.on_event("startup")
 def on_startup():
-    create_db_and_tables()
-
+    create_db_and_table()
 
 @app.get("/sequence/increment")
 def increment(seqNumbersRequired : int = 1):
@@ -46,7 +40,6 @@ def increment(seqNumbersRequired : int = 1):
         session.add(results)
         session.commit()
         return response
-
 
 @app.get("/sequence/no-increment")
 def no_increment():
